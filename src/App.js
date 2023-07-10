@@ -8,7 +8,7 @@ const KanbanCard = ({ title, status }) => {
       <div className="card-title">{title}</div>
       <div className="card-status">{status}</div>
     </li>
-  )
+  );
 }
 
 const KanbanNewCard = ({ onSubmit }) => {
@@ -31,7 +31,7 @@ const KanbanNewCard = ({ onSubmit }) => {
         <input type="text" value={title} onChange={handleChange} onKeyDown={handleKeyDown}/>
       </div>
     </li>
-  )
+  );
 }
 
 function App() {
