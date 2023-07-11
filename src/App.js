@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 const KanbanBoard = ({ children }) => (
   <main className="kanban-board">{children}</main>
@@ -68,11 +68,16 @@ const KanbanNewCard = ({ onSubmit }) => {
     }
   };
 
+  const inputElem = useRef(null);
+  useEffect(() => {
+    inputElem.current.focus();
+  });
+
   return (
     <li className="kanban-card">
       <h3>New Card</h3>
       <div className="kanban-card">
-        <input type="text" value={title} onChange={handleChange} onKeyDown={handleKeyDown}/>
+        <input type="text" value={title} onChange={handleChange} onKeyDown={handleKeyDown} ref={inputElem}/>
       </div>
     </li>
   );
