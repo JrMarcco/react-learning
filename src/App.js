@@ -2,11 +2,11 @@ import logo from './logo.svg';
 import './App.css';
 import React, {useEffect, useRef, useState} from "react";
 
-const KanbanBoard = ({ children }) => (
+const KanbanBoard = ({children}) => (
   <main className="kanban-board">{children}</main>
 );
 
-const KanbanColumn = ({ children, className, title }) => {
+const KanbanColumn = ({children, className, title}) => {
   const combinedClassName = `kanban-column ${className}`;
   return (
     <section className={combinedClassName}>
@@ -20,7 +20,7 @@ const MINUTE = 60 * 1000
 const HOUR = 60 * MINUTE
 const DAY = 24 * HOUR
 const UPDATE_INTERVAL = MINUTE
-const KanbanCard = ({ title, status }) => {
+const KanbanCard = ({title, status}) => {
   const [displayTime, setDisplayTime] = useState(status);
   useEffect(() => {
 
@@ -55,7 +55,7 @@ const KanbanCard = ({ title, status }) => {
     </li>
   );
 }
-const KanbanNewCard = ({ onSubmit }) => {
+const KanbanNewCard = ({onSubmit}) => {
   const [title, setTitle] = useState('');
 
   const handleChange = (evt) => {
@@ -71,7 +71,7 @@ const KanbanNewCard = ({ onSubmit }) => {
   const inputElem = useRef(null);
   useEffect(() => {
     inputElem.current.focus();
-  });
+  }, []);
 
   return (
     <li className="kanban-card">
@@ -83,13 +83,40 @@ const KanbanNewCard = ({ onSubmit }) => {
   );
 }
 
+const DATA_STORE_KEY = "kanban-data";
+
 function App() {
+  const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
 
   const [todoList, setTodoList] = useState([]);
-
   const [ongoingList, setOngoingList] = useState([]);
   const [doneList, setDoneList] = useState([]);
+
+  useEffect(() => {
+    const data = window.localStorage.getItem(DATA_STORE_KEY);
+    setTimeout(() => {
+      if (data) {
+        const kanbanColumnData = JSON.parse(data);
+        setTodoList(kanbanColumnData.todoList);
+        setOngoingList(kanbanColumnData.ongoingList);
+        setDoneList(kanbanColumnData.doneList);
+      }
+
+      setLoading(false);
+
+    }, 1000);
+  }, []);
+
+  const handleSaveAll = () => {
+    const data = JSON.stringify({
+      todoList,
+      ongoingList,
+      doneList
+    });
+
+    window.localStorage.setItem(DATA_STORE_KEY, data);
+  };
 
   const handleAdd = (evt) => {
     setShowAdd(true);
@@ -98,7 +125,7 @@ function App() {
   const handleSubmit = (title) => {
 
     setTodoList(currentTodoList => [
-      { title, status: new Date().toLocaleString() },
+      {title, status: new Date().toLocaleString()},
       ...currentTodoList
     ]);
 
@@ -115,20 +142,28 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>React Learning</h1>
-        <img src={logo} className="App-logo" alt="logo" />
+        <h1>React Learning
+          <button onClick={handleSaveAll}>Save All</button>
+        </h1>
+        <img src={logo} className="App-logo" alt="logo"/>
       </header>
       <KanbanBoard>
-        <KanbanColumn className="column-todo" title={todoTitle}>
-          { showAdd && <KanbanNewCard onSubmit={handleSubmit}/> }
-          { todoList.map(props => <KanbanCard key={props.title} {...props}/>) }
-        </KanbanColumn>
-        <KanbanColumn className="column-ongoing" title="Ongoing">
-          { ongoingList.map(props => <KanbanCard key={props.title} {...props}/>) }
-        </KanbanColumn>
-        <KanbanColumn className="column-done" title="Done">
-          { doneList.map(props => <KanbanCard key={props.title} {...props}/>) }
-        </KanbanColumn>
+        {
+          loading ? (<KanbanColumn title="Loading..."/>) : (
+           <>
+             <KanbanColumn className="column-todo" title={todoTitle}>
+               {showAdd && <KanbanNewCard onSubmit={handleSubmit}/>}
+               {todoList.map(props => <KanbanCard key={props.title} {...props}/>)}
+             </KanbanColumn>
+             <KanbanColumn className="column-ongoing" title="Ongoing">
+               {ongoingList.map(props => <KanbanCard key={props.title} {...props}/>)}
+             </KanbanColumn>
+             <KanbanColumn className="column-done" title="Done">
+               {doneList.map(props => <KanbanCard key={props.title} {...props}/>)}
+             </KanbanColumn>
+           </>
+          )
+        }
       </KanbanBoard>
     </div>
   );
