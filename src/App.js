@@ -62,7 +62,7 @@ function App() {
   const [dragSource, setDragSource] = useState(null);
   const [dragTarget, setDragTarget] = useState(null);
 
-  const handleDrop = () => {
+  const handleDrop = (evt) => {
     if (!dragItem || !dragSource || !dragTarget || dragSource === dragTarget) {
       return;
     }
@@ -74,17 +74,13 @@ function App() {
     };
 
     if (dragSource) {
-      updaters[dragSource](
-        (currentStat) => {
-          currentStat.filter((item) => !Object.is(item, dragItem))
-        }
-      );
+      updaters[dragSource]((currentStat) => {
+        currentStat.filter((item) => !Object.is(item, dragItem))
+      });
     }
 
     if (dragTarget) {
-      updaters[dragTarget](
-        (currentStat) => [dragItem, ...currentStat]
-      );
+      updaters[dragTarget]((currentStat) => [dragItem, ...currentStat]);
     }
   };
 
@@ -98,8 +94,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>React Learning
-          <button onClick={handleSaveAll}>Save All</button>
+        <h1>
+          React Learning <button onClick={handleSaveAll}>Save All</button>
         </h1>
         <img src={logo} className="App-logo" alt="logo"/>
       </header>
