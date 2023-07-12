@@ -1,13 +1,11 @@
 import logo from './logo.svg';
 import './App.css';
 import React, { useEffect, useRef, useState } from "react";
+import KanbanBoard from "./kanbanBoard";
 import KanbanCard from "./kanbanCard";
 import KanbanNewCard from "./kanbanNewCard";
 import KanbanColumn from "./kanbanColumn";
 
-const KanbanBoard = ({ children }) => (
-  <main className="kanban-board">{children}</main>
-);
 
 const DATA_STORE_KEY = "kanban-data";
 const COLUMN_KEY_TODO = "todo";
